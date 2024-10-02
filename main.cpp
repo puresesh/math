@@ -5,9 +5,28 @@
 #define GRAPH_WIDTH 1000
 #define GRAPH_HEIGHT 500
 
+struct availableColors {
 
-int main(void)
-{
+  XColor customBlue;
+
+};
+
+void initGraphPlane(Display* display, Window window, GC gc, availableColors avC) {
+
+
+  XDrawLine(display, window, gc, 10, 10, GRAPH_WIDTH, 10);
+  XDrawLine(display, window, gc, GRAPH_WIDTH, 10, GRAPH_WIDTH, GRAPH_HEIGHT);
+  XDrawLine(display, window, gc, GRAPH_WIDTH, GRAPH_HEIGHT, 10, GRAPH_HEIGHT);
+  XDrawLine(display, window, gc, 10, GRAPH_HEIGHT, 10,10);
+
+  XSetForeground(display, gc, avC.customBlue.pixel);
+
+  XDrawLine(display, window, gc, 10, 10, 50,50);  
+
+}
+
+int main(void) {
+
   Display* display = XOpenDisplay(NULL);
 
   if (!display)
@@ -18,11 +37,11 @@ int main(void)
     return 1;
   }
 
-  XColor myblue;
-  myblue.red = 0;
-  myblue.green = 0;
-  myblue.blue = 65535;
-
+  availableColors avC;
+  avC.customBlue.red = 65535;
+  avC.customBlue.green = 0; 
+  avC.customBlue.blue = 65535;
+    
 
   int blackColor = BlackPixel(display, DefaultScreen(display));
   int whiteColor = WhitePixel(display, DefaultScreen(display));
@@ -55,10 +74,7 @@ int main(void)
   
   sleep(1);
 
-  XDrawLine(display, window, gc, 10, 10, GRAPH_WIDTH, 10);
-  XDrawLine(display, window, gc, GRAPH_WIDTH, 10, GRAPH_WIDTH, GRAPH_HEIGHT);
-  XDrawLine(display, window, gc, GRAPH_WIDTH, GRAPH_HEIGHT, 10, GRAPH_HEIGHT);
-  XDrawLine(display, window, gc, 10, GRAPH_HEIGHT, 10,10);
+  initGraphPlane(display,window,gc,avC);
   
   XFlush(display);                                // send all data to X11 server
 
