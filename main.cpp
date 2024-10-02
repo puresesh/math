@@ -6,7 +6,7 @@
 
 #define GRAPH_WIDTH 1000
 #define GRAPH_HEIGHT 500
-#define RESOLUTION 10
+#define RESOLUTION 1
 
 #define X_OFFSET 10
 #define Y_OFFSET 10
@@ -14,15 +14,16 @@
 struct availableColors {
 
   XColor customBlue;
+  XColor customRed;
 
 };
 
 float* initTestArray() {
 
-  float* testArr = new float[50];
-  for(int x = 0; x < 50; x++) {
+  float* testArr = new float[100];
+  for(int x = 0; x < 100; x++) {
 
-    testArr[x] = pow(x-20,2);
+    testArr[x] = pow((x-50),2);
 
   }
 
@@ -35,8 +36,8 @@ XPoint* arrToXPArr(float* intArr, int length) {
   
   for(int i = 0; i < length; i++){
 
-    points[i].y = intArr[i] + Y_OFFSET;
-    points[i].x = RESOLUTION*i + X_OFFSET;
+    points[i].y = intArr[i] + GRAPH_HEIGHT/2;
+    points[i].x = (RESOLUTION*i) + X_OFFSET;
     
   }
 
@@ -51,8 +52,12 @@ void initGraphPlane(Display* display, Window window, GC gc, availableColors avC)
   XDrawLine(display, window, gc, GRAPH_WIDTH, 10, GRAPH_WIDTH, GRAPH_HEIGHT);
   XDrawLine(display, window, gc, GRAPH_WIDTH, GRAPH_HEIGHT, 10, GRAPH_HEIGHT);
   XDrawLine(display, window, gc, 10, GRAPH_HEIGHT, 10,10);
+  
+  XSetForeground(display, gc, avC.customBlue.pixel);// blue zero
 
-  XSetForeground(display, gc, avC.customBlue.pixel);
+  XDrawLine(display, window, gc, 10, GRAPH_HEIGHT/2, GRAPH_WIDTH, GRAPH_HEIGHT/2);
+  
+  XSetForeground(display, gc, avC.customRed.pixel);// red function
 
   //XDrawLine(display, window, gc, 10, 10, 50,50);  
   
@@ -71,9 +76,14 @@ int main(void) {
   }
 
   availableColors avC;
-  avC.customBlue.red = 65535;
+  avC.customBlue.red = 0;
   avC.customBlue.green = 0; 
   avC.customBlue.blue = 65535;
+
+  
+  avC.customRed.red = 65535;
+  avC.customRed.green = 0; 
+  avC.customRed.blue = 0;
     
 
   int blackColor = BlackPixel(display, DefaultScreen(display));
@@ -97,6 +107,8 @@ int main(void) {
   GC gc = XCreateGC(display, window, 0, NULL); // graphic context for render?
 
   XSetForeground(display, gc, blackColor);
+
+  XStoreName(display, window, "math renderer");
   
   for(;;) {
     XEvent e;
@@ -105,12 +117,12 @@ int main(void) {
       break;
   }
   
-  sleep(1);
+
 
   initGraphPlane(display,window,gc,avC);
   float* testArray = initTestArray();
-  XPoint* points = arrToXPArr(testArray,50);
-  XDrawLines(display, window, gc, points, 50, CoordModeOrigin);
+  XPoint* points = arrToXPArr(testArray,100);
+  XDrawLines(display, window, gc, points, 100, CoordModeOrigin);
 
   for(int i = 0; i < 50; i++) {
     
@@ -123,9 +135,9 @@ int main(void) {
   
   XFlush(display);                                // send all data to X11 server
 
-  sleep(5);
+  sleep(50);
 
-  XUnmapWindow(display, window);                  // close window, connection and free resources
+  XUnmapWindow(display, window);                  // close window, connection and free resources shoutout to ferox
   XDestroyWindow(display, window);
   XCloseDisplay(display);
 }
