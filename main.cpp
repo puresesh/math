@@ -4,6 +4,7 @@
 
 #define GRAPH_WIDTH 1000
 #define GRAPH_HEIGHT 500
+#define RESOLUTION 1
 
 struct availableColors {
 
@@ -11,17 +12,30 @@ struct availableColors {
 
 };
 
-XPoint* arrToXPArr(int intArr[]) {
+int* initTestArray() {
 
-  XPoint* points[(sizeof(intArr)/sizeof(intArr[0]))] = {}; 
-  
-  for(int element : intArr){
+  int* testArr = new int[8];
+  for(int i = 0; i < 8; i++) {
 
-    
+    testArr[i] = 2^i;
 
   }
 
-  return *points;
+  return testArr;
+}
+
+XPoint* arrToXPArr(int* intArr, int length) {
+
+  XPoint* points = new XPoint[length]; 
+  
+  for(int i = 0; i < length; i++){
+
+    points[i].y = intArr[i];
+    points[i].x = RESOLUTION*i;
+    
+  }
+
+  return points;
   
 }
 
@@ -36,8 +50,6 @@ void initGraphPlane(Display* display, Window window, GC gc, availableColors avC)
   XSetForeground(display, gc, avC.customBlue.pixel);
 
   XDrawLine(display, window, gc, 10, 10, 50,50);  
-  
-  XDrawLines(display, window, gc, points, 8, CoordModePrevious);
   
 }
 
@@ -91,6 +103,10 @@ int main(void) {
   sleep(1);
 
   initGraphPlane(display,window,gc,avC);
+  int* testArray = initTestArray();
+  XPoint* points = arrToXPArr(testArray,8);
+  XDrawLines(display, window, gc, points, 8, CoordModePrevious);
+  
   
   XFlush(display);                                // send all data to X11 server
 
