@@ -1,10 +1,15 @@
 #include <X11/Xlib.h>
 #include <unistd.h> 
 #include <stdio.h>  
+#include <iostream>
+#include <cmath>
 
 #define GRAPH_WIDTH 1000
 #define GRAPH_HEIGHT 500
-#define RESOLUTION 1
+#define RESOLUTION 10
+
+#define X_OFFSET 10
+#define Y_OFFSET 10
 
 struct availableColors {
 
@@ -12,26 +17,26 @@ struct availableColors {
 
 };
 
-int* initTestArray() {
+float* initTestArray() {
 
-  int* testArr = new int[8];
-  for(int i = 0; i < 8; i++) {
+  float* testArr = new float[50];
+  for(int x = 0; x < 50; x++) {
 
-    testArr[i] = 2^i;
+    testArr[x] = pow(x-20,2);
 
   }
 
   return testArr;
 }
 
-XPoint* arrToXPArr(int* intArr, int length) {
+XPoint* arrToXPArr(float* intArr, int length) {
 
   XPoint* points = new XPoint[length]; 
   
   for(int i = 0; i < length; i++){
 
-    points[i].y = intArr[i];
-    points[i].x = RESOLUTION*i;
+    points[i].y = intArr[i] + Y_OFFSET;
+    points[i].x = RESOLUTION*i + X_OFFSET;
     
   }
 
@@ -49,7 +54,7 @@ void initGraphPlane(Display* display, Window window, GC gc, availableColors avC)
 
   XSetForeground(display, gc, avC.customBlue.pixel);
 
-  XDrawLine(display, window, gc, 10, 10, 50,50);  
+  //XDrawLine(display, window, gc, 10, 10, 50,50);  
   
 }
 
@@ -103,14 +108,22 @@ int main(void) {
   sleep(1);
 
   initGraphPlane(display,window,gc,avC);
-  int* testArray = initTestArray();
-  XPoint* points = arrToXPArr(testArray,8);
-  XDrawLines(display, window, gc, points, 8, CoordModePrevious);
-  
+  float* testArray = initTestArray();
+  XPoint* points = arrToXPArr(testArray,50);
+  XDrawLines(display, window, gc, points, 50, CoordModeOrigin);
+
+  for(int i = 0; i < 50; i++) {
+    
+    std::cout << "y:" << points[i].y << "\n";
+    std::cout << "x:" << points[i].x << "\n";
+    std::cout << "int:" << testArray[i] << "\n";
+    std::cout << "---\n";
+    
+  }
   
   XFlush(display);                                // send all data to X11 server
 
-  sleep(2);
+  sleep(5);
 
   XUnmapWindow(display, window);                  // close window, connection and free resources
   XDestroyWindow(display, window);
