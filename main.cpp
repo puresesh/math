@@ -1,10 +1,14 @@
 #include <X11/Xlib.h>
-#include <unistd.h> // sleep()
-#include <stdio.h>  // fprintf()
+#include <unistd.h> 
+#include <stdio.h>  
+
+#define GRAPH_WIDTH 1000
+#define GRAPH_HEIGHT 500
+
 
 int main(void)
 {
-  Display* display = XOpenDisplay(NULL);          // open connection
+  Display* display = XOpenDisplay(NULL);
 
   if (!display)
   {
@@ -25,7 +29,7 @@ int main(void)
   
   Window window = XCreateSimpleWindow(
 				      display,
-				      DefaultRootWindow(display),                   // parent window
+				      DefaultRootWindow(display),// parent window
 				      0,//x
 				      0,//y
 				      720,//width
@@ -36,9 +40,9 @@ int main(void)
 
   XSelectInput(display, window, StructureNotifyMask);
 
-  XMapWindow(display, window);                    // make new window visible
+  XMapWindow(display, window);                    
   
-  GC gc = XCreateGC(display, window, 0, NULL);
+  GC gc = XCreateGC(display, window, 0, NULL); // graphic context for render?
 
   XSetForeground(display, gc, blackColor);
   
@@ -51,8 +55,10 @@ int main(void)
   
   sleep(1);
 
-  XDrawLine(display, window, gc, 10, 10, 100, 10);
-  XDrawLine(display, window, gc, 10, 10, 10, 100);
+  XDrawLine(display, window, gc, 10, 10, GRAPH_WIDTH, 10);
+  XDrawLine(display, window, gc, GRAPH_WIDTH, 10, GRAPH_WIDTH, GRAPH_HEIGHT);
+  XDrawLine(display, window, gc, GRAPH_WIDTH, GRAPH_HEIGHT, 10, GRAPH_HEIGHT);
+  XDrawLine(display, window, gc, 10, GRAPH_HEIGHT, 10,10);
   
   XFlush(display);                                // send all data to X11 server
 
