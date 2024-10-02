@@ -10,6 +10,11 @@
 
 #define X_OFFSET 10
 #define Y_OFFSET 10
+#define X_SCALE 1
+#define Y_SCALE 1
+
+
+#define RENDER_FUNCTION (pow(x,2))
 
 struct availableColors {
 
@@ -18,12 +23,12 @@ struct availableColors {
 
 };
 
-float* initTestArray() {
+float* initCords() {
 
-  float* testArr = new float[100];
-  for(int x = 0; x < 100; x++) {
+  float* testArr = new float[GRAPH_WIDTH];
+  for(int x = 0; x < GRAPH_WIDTH; x++) {
 
-    testArr[x] = pow((x-50),2);
+    testArr[x] = RENDER_FUNCTION;
 
   }
 
@@ -61,6 +66,16 @@ void initGraphPlane(Display* display, Window window, GC gc, availableColors avC)
 
   //XDrawLine(display, window, gc, 10, 10, 50,50);  
   
+}
+
+
+void renderOnCanvas(Display* display, Window window, GC gc, availableColors avC) {
+
+  initGraphPlane(display,window,gc,avC);
+  float* testArray = initCords();
+  XPoint* points = arrToXPArr(testArray,GRAPH_WIDTH);
+  XDrawLines(display, window, gc, points, GRAPH_WIDTH, CoordModeOrigin);
+
 }
 
 int main(void) {
@@ -116,28 +131,14 @@ int main(void) {
     if (e.type == MapNotify)
       break;
   }
+
+  renderOnCanvas(display,window,gc,avC);//start render Process
   
-
-
-  initGraphPlane(display,window,gc,avC);
-  float* testArray = initTestArray();
-  XPoint* points = arrToXPArr(testArray,100);
-  XDrawLines(display, window, gc, points, 100, CoordModeOrigin);
-
-  for(int i = 0; i < 50; i++) {
-    
-    std::cout << "y:" << points[i].y << "\n";
-    std::cout << "x:" << points[i].x << "\n";
-    std::cout << "int:" << testArray[i] << "\n";
-    std::cout << "---\n";
-    
-  }
-  
-  XFlush(display);                                // send all data to X11 server
+  XFlush(display); // send all data to X11 server
 
   sleep(50);
 
-  XUnmapWindow(display, window);                  // close window, connection and free resources shoutout to ferox
+  XUnmapWindow(display, window);// close window, connection and free resources shoutout to ferox
   XDestroyWindow(display, window);
   XCloseDisplay(display);
 }
