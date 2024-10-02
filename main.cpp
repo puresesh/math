@@ -11,6 +11,20 @@ struct availableColors {
 
 };
 
+XPoint* arrToXPArr(int intArr[]) {
+
+  XPoint* points[(sizeof(intArr)/sizeof(intArr[0]))] = {}; 
+  
+  for(int element : intArr){
+
+    
+
+  }
+
+  return *points;
+  
+}
+
 void initGraphPlane(Display* display, Window window, GC gc, availableColors avC) {
 
 
@@ -22,7 +36,9 @@ void initGraphPlane(Display* display, Window window, GC gc, availableColors avC)
   XSetForeground(display, gc, avC.customBlue.pixel);
 
   XDrawLine(display, window, gc, 10, 10, 50,50);  
-
+  
+  XDrawLines(display, window, gc, points, 8, CoordModePrevious);
+  
 }
 
 int main(void) {

@@ -1,2 +1,2 @@
 main:
-	g++ -o xlib_example main.cpp -lX11
+	g++ -o xlib_app main.cpp -lX11
