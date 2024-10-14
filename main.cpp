@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cmath>
 
-#define GRAPH_WIDTH 500
+#define GRAPH_WIDTH 1000
 #define GRAPH_HEIGHT 500
 #define RESOLUTION 1
 
@@ -14,13 +14,23 @@
 #define L_DEF 0
 #define R_DEF 500
 
+#define Y_ZERO 50
+#define X_ZERO 300
 
-#define RENDER_FUNCTION (pow(x,2))
+
+#define RENDER_FUNCTION (1000/(x+1))
 
 struct availableColors {
 
   XColor customBlue;
   XColor customRed;
+
+};
+
+struct eXPoints {
+
+  XPoint* points;
+  int nOfPoints;
 
 };
 
@@ -32,6 +42,12 @@ struct calculatedFunctionValues {
   
 };
 
+XPoint* mapValuesToScalar(XPoint* points, int leftBorder, int rightBorder) {
+
+
+  return points;
+
+}
 
 calculatedFunctionValues calculateFunction(int LDef, int RDef) {
 
@@ -42,7 +58,7 @@ calculatedFunctionValues calculateFunction(int LDef, int RDef) {
   
   for(int x = 0; x < GRAPH_WIDTH; x++) {
 
-    cFV.yValues[x] = 2*x;
+    cFV.yValues[x] = RENDER_FUNCTION;
     cFV.xValues[x] = x;
     
   }
@@ -57,8 +73,8 @@ XPoint* arrToXPArr(calculatedFunctionValues cFV, int length) {
   
   for(int i = 0; i < length; i++){
     
-    points[i].y = cFV.yValues[i] + GRAPH_HEIGHT/2;
-    points[i].x = cFV.xValues[i] + X_OFFSET;
+    points[i].y = cFV.yValues[i]*-1 + Y_OFFSET + X_ZERO;
+    points[i].x = cFV.xValues[i] + X_OFFSET + Y_ZERO;
     
     if(points[i].y > GRAPH_HEIGHT){
       points[i].y = GRAPH_HEIGHT;
@@ -79,17 +95,29 @@ void initGraphPlane(Display* display, Window window, GC gc, availableColors avC)
 
   //x zero line  in blue
   XSetForeground(display, gc, avC.customBlue.pixel);
-  XDrawLine(display, window, gc, 10, GRAPH_HEIGHT/2, GRAPH_WIDTH, GRAPH_HEIGHT/2);
+  XDrawLine(display, window, gc, X_OFFSET, X_ZERO+X_OFFSET, GRAPH_WIDTH, X_ZERO+X_OFFSET);
 
   for(int i = 0; i<GRAPH_WIDTH/10; i++) {
 
-    XDrawLine(display, window, gc, i*10+10, GRAPH_HEIGHT/2-2, i*10+10, GRAPH_HEIGHT/2+2);  
+    XDrawLine(display, window, gc, i*10+X_OFFSET, X_ZERO-1+X_OFFSET, i*10+10, X_ZERO+1+X_OFFSET);  
 
   }
 
+  //x zero line  in blue
+  XSetForeground(display, gc, avC.customBlue.pixel);
+  XDrawLine(display, window, gc, Y_OFFSET + Y_ZERO, Y_OFFSET, Y_ZERO + Y_OFFSET , GRAPH_HEIGHT);
+
+  for(int i = 0; i<GRAPH_WIDTH/10; i++) {
+
+    XDrawLine(display, window, gc, Y_ZERO-1+Y_OFFSET, i*10+Y_OFFSET, Y_ZERO+1+Y_OFFSET, i*10+10);  
+
+  }
+  
   
   XSetForeground(display, gc, avC.customRed.pixel);// red function
 
+
+  
   //XDrawLine(display, window, gc, 10, 10, 50,50);  
   
 }
@@ -102,6 +130,8 @@ void renderOnCanvas(Display* display, Window window, GC gc, availableColors avC)
   XPoint* points = arrToXPArr(testArray,GRAPH_WIDTH);
   XDrawLines(display, window, gc, points, GRAPH_WIDTH, CoordModeOrigin);
 
+
+  
 }
 
 int main(void) {
