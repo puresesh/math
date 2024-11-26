@@ -3,6 +3,9 @@
 #include <iomanip>
 #include <sstream>
 #include <fstream>
+#include <thread>
+
+
 
 std::string sha256(const std::string& str) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -26,27 +29,31 @@ char intToChar(int i) {
 
 }
 
-int main() {
+std::string calculateChunk(int lowerbound, int upperbound) {
 
-  std::ofstream output;
-  output.open("output.txt");
+  std::string output = "";
 
-  int buffer1,buffer2,buffer3,buffer4,buffer5 = 0;
-
-  for(int i = 0; i < 36^5; i++) {
+  int repetitions = (upperbound - lowerbound)*36^4;
+  
+  int buffer2,buffer3,buffer4,buffer5 = 0;
+  int buffer1 = lowerbound;
+  
+  for(int i = 0; i < repetitions; i++) {
 
     std::string toHash = "";
-
-    toHash += intToChar(buffer1);
+    
+    toHash += intToChar(buffer1) + "b1";
     toHash += intToChar(buffer2);
     toHash += intToChar(buffer3);
     toHash += intToChar(buffer4);
     toHash += intToChar(buffer5);
 
-    output << toHash << " : " << sha256(toHash) << std::endl;
+    output += toHash;
+    output += " : ";
+    output += sha256(toHash);
+    output += "\n";
 
     buffer5++;
-
 
     if(buffer5 < 36){
       continue;}
@@ -71,19 +78,27 @@ int main() {
     else{
       buffer2 = 0;
       buffer1++;}
-
-    if(buffer1 < 36){
+    
+    if(buffer1 < upperbound){
       continue;}
     else{
       break;}
 
   }
+  
+  return output;
+}
 
-
-  output.close();
+int main() {
+  
+  std::ofstream output;
+  output.open("output.txt");
+  
+  output << calculateChunk(1,2);
+  
+  output.close();  
 
   std::cout  << "done" << std::endl;
   std::cout << sha256("zz");
   return 0;
 }
-
