@@ -67,3 +67,13 @@ if (ptr) {
     std::copy(ptr, ptr + outputData.size(), outputData.begin());
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
+----
+
+    int work_grp_cnt[3];
+
+glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &work_grp_cnt[0]);
+glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &work_grp_cnt[1]);
+glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &work_grp_cnt[2]);
+
+printf("max global (total) work group counts x:%i y:%i z:%i\n",
+  work_grp_cnt[0], work_grp_cnt[1], work_grp_cnt[2]);
